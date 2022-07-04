@@ -211,7 +211,7 @@ func __execute__{
             end
             if guardian_condition == 0:
                 # validate guardian signature
-                validate_guardian_signature(tx_info.transaction_hash, tx_info.signature, tx_info.signature_len)
+                validate_guardian_signature(tx_info.transaction_hash, tx_info.signature_len, tx_info.signature)
                 jmp do_execute
             end
         end
@@ -497,8 +497,8 @@ func is_valid_signature{
     alloc_locals
 
     let (is_signer_sig_valid) = validate_signer_signature(hash, sig, sig_len)
-    let (is_guardian_sig_valid) = validate_guardian_signature(hash, sig + 2, sig_len - 2)
-    
+    let (is_guardian_sig_valid) = validate_guardian_signature(hash, sig_len - 2, sig + 2)
+
     # Cairo's way of doing `&&` is by multiplying the two booleans.
     return (is_valid=is_signer_sig_valid * is_guardian_sig_valid)
 end
