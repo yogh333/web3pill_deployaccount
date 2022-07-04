@@ -135,6 +135,7 @@ end
 # EXTERNAL FUNCTIONS
 ####################
 
+
 @constructor
 func constructor{
         syscall_ptr: felt*,
@@ -157,8 +158,8 @@ func constructor{
     _signer.write(signer)
     _guardian.write(guardian)
     # emit event
-    #let (self) = get_contract_address()
-    #account_created.emit(account=self, key=signer, guardian=guardian)
+    let (self) = get_contract_address()
+    account_created.emit(account=self, key=signer, guardian=guardian)
     return ()
 end
 
@@ -220,7 +221,7 @@ func __execute__{
     end
     # validate signer and guardian signatures
     validate_signer_signature(tx_info.transaction_hash, tx_info.signature, tx_info.signature_len)
-    validate_guardian_signature(tx_info.transaction_hash, tx_info.signature + 2, tx_info.signature_len - 2)
+    #validate_guardian_signature(tx_info.transaction_hash, tx_info.signature + 2, tx_info.signature_len - 2)
 
     # execute calls
     do_execute:
@@ -676,6 +677,7 @@ func validate_signer_signature{
     return(is_valid=TRUE)
 end
 
+@view
 func validate_guardian_signature{
         syscall_ptr: felt*, 
         pedersen_ptr: HashBuiltin*,
@@ -683,8 +685,8 @@ func validate_guardian_signature{
         range_check_ptr
     } (
         message: felt,
-        signatures: felt*,
-        signatures_len: felt
+        signatures_len: felt,
+        signatures: felt*
     ) -> (is_valid: felt):
     alloc_locals
     let (guardian) = _guardian.read()
